@@ -2,33 +2,34 @@ using UnityEngine;
 
 public class RotationController : MonoBehaviour
 {
-    private float rotationAnglez = 1f;
-    private float rotationAngley = 1f;
+    [SerializeField]private float rotationAnglez = 1;
+    [SerializeField] private float rotationAngley = 2;
     private float rotationSpeed = 1f;
-    private float speed = 40.0f;
+    [SerializeField] private float speed = 40.0f;
 
     void Update()
     {
-        float input = Input.GetAxis("Horizontal");
+        Vector2 input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized * Time.deltaTime;
 
-        Quaternion yRotation = CalculateRotationQuaternion(rotationAngley * input, Vector3.up);
-        Quaternion zRotation = CalculateRotationQuaternion(rotationAnglez * -input, Vector3.forward);
-        
-        transform.rotation = (yRotation * zRotation) * transform.rotation * (ConjugateQuaternion(yRotation) * ConjugateQuaternion(zRotation));
+        Quaternion yRotation = CalculateRotationQuaternion(rotationAngley * input.x, Vector3.up);
+        Quaternion zRotation = CalculateRotationQuaternion(rotationAnglez * -input.x, Vector3.forward);
 
-        transform.position = transform.position + transform.forward * Time.deltaTime * speed;
+        print(zRotation);
+
+        transform.localRotation = yRotation * transform.localRotation * zRotation;
+
+
+        transform.position += transform.forward * Time.deltaTime * speed;
     }
 
     Quaternion CalculateRotationQuaternion(float angle, Vector3 axis)
     {
-        // angle en radians
         float angleInRadians = angle * Mathf.Deg2Rad;
 
-        // quaternion de rotation
         Quaternion rotationQuaternion = new Quaternion(
-            0, // ici ca vaut 0
-            axis.y * Mathf.Sin(angleInRadians / 2), // ici ca vaut 0 pour l'axe z
-            axis.z * Mathf.Sin(angleInRadians / 2), // ici ca vaut 0 pour l'axe y
+            axis.x * Mathf.Sin(angleInRadians / 2), 
+            axis.y * Mathf.Sin(angleInRadians / 2),
+            axis.z * Mathf.Sin(angleInRadians / 2), 
             Mathf.Cos(angleInRadians / 2)
         );
 
