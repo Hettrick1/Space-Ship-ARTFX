@@ -17,7 +17,7 @@ public class RotationController : MonoBehaviour
         print(zRotation);
 
         transform.localRotation = yRotation * transform.localRotation * zRotation;
-
+             
 
         transform.position += transform.forward * Time.deltaTime * speed;
     }
